@@ -13,6 +13,67 @@
         <p><strong>Peruskäyttäjän tila:</strong> Näytetään vain omat tehtävät.</p>
     {% endif %}
     <h2>Kanban taulu</h2>
+
+    <button id="toggle-incomplete" class="btn btn-primary mb-3" 
+    onclick="SuoritaJokinToiminto();">Näytä vain keskeneräiset</button>
+
+    <script>
+        var KaikkiKortitEsillä = true;
+
+        // Funktion esittely
+        function SuoritaJokinToiminto(parametri)
+        {
+            // Haetaan jokin näkyvillä oleva HTML-elementti sen ID:n perusteella
+            // Tässä tapauksessa siis aiemmin lisätty painike
+            var painike = document.getElementById("toggle-incomplete");
+     
+            // Luetaan painikkeen väri muuttujaan
+            var vari = painike.style.backgroundColor;
+            
+            // Näytetään painikkeen väri "pop-upissa"
+            alert(vari);
+     
+            // Vaihdetaan väriksi punainen
+            painike.style.backgroundColor = "#FF0000";
+        }
+
+        function PiilotaValmiitTaiNaytaKaikki()
+        {
+            var painike = document.getElementById("toggle-incomplete");
+            if (KaikkiKortitEsill == true)
+            {
+                painike.innerHTML = "Näytä kaikki";
+                KaikkiKortitEsill = false;
+            }
+            else
+            {
+                painike.innerHTML = "näytä vain keskeneräiset";
+                KaikkiKortitEsill = true;
+            }
+
+            var tehtavakortit = document.getElementById("task-card");
+
+            for(var i=0;i<tehtavakortit.legth;i++)
+            {
+                var onkoTehtavaValmis = tehtavakortit[i].innerHTML.includes("valmis");
+                var onkoTehtavaValmisOikeasti=tehtavakortit[1].querySelector(".task-completed")
+                console.log(onkoTehtavaValmis);
+                if(KaikkiKortitEsill == false && onkoTehtavaValmisOikeasti === "true")
+                {
+                    tehtavakortit[i].style.display = "none";
+                }
+                else
+                {
+                    tehtavakortit[i].style.display = "block";
+                }
+            }
+        }
+
+
+    </script>
+
+
+
     <div class="task-container d-flex flex-wrap gap-3">
         {% for task_class, tasks in luokitellut_tehtavat.items %}
             <div class="task-column border p-3">
@@ -21,6 +82,7 @@
                     <div class="task-card p-2 border rounded">
                         <h4>{{ task.title }}</h4>
                         <p>{{ task.description }}</p>
+                        <input type="hidden" class="task-completed" value="{{ task.completed }}"/>
                         {% if task.completed %}
                             ✅ Valmis
                         {% else %}
